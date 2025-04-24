@@ -1,0 +1,96 @@
+%Using frequency and amplitude values as given in the lab manual
+%Frequency of carrier signal (f_c)
+f_c = 600e3; %600 KHz
+%Frequency of message signal (f_m)
+f_m = 1e3; %1KHz
+%Sampling frequency (F_s >= f_c{Nyquist criterion}))
+Fs = 6*f_c; %%Sampling freq has been taken fairly large for better output
+%Defining total sampling points
+t = 0:1/Fs:1-1/Fs;
+%Defining message signal
+V_m = 0.75*cos(2*pi*f_m*t); %1.5V pp
+%Defining carrier signal
+V_c = 0.75*cos(2*pi*f_c*t); %1.5V pp
+%Defining the DSB-SC modulated signal
+V_dsbsc = V_m.*V_c;
+%Plotting message signal
+figure(1);
+plot(t, V_m);
+title('Message signal V_m(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+ylim([-1,1]);
+%Plotting carrier signal
+figure(2);
+plot(t, V_c);
+title('Carrier signal V_c(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0, 1e-5]);
+ylim([-1, 1]);
+%Plotting DSB-SC modulated signal
+figure(3);
+plot(t, V_dsbsc);
+title('Modulated wave V_{dsbsc}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+ylim([-1, 1]);
+
+
+
+
+
+
+
+
+
+%Using frequency and amplitude values as given in the lab manual
+%Frequency of carrier signal (f_c)
+f_c = 600e3; %600 KHz
+%Frequency of message signal (f_m)
+f_m = 1e3; %1KHz
+%Sampling frequency (F_s >= f_c{Nyquist criterion}))
+Fs = 6*f_c; %%Sampling freq has been taken fairly large for better output
+%Defining total sampling points
+t = 0:1/Fs:1-1/Fs;
+
+%Defining message signal
+V_m = 0.75*cos(2*pi*f_m*t); %1.5V pp
+%Defining carrier signal
+V_c = 0.75*cos(2*pi*f_c*t); %1.5V pp
+%Defining the DSB-SC modulated signal
+V_dsbsc = V_m.*V_c;
+%Defining output of synchronous product detector
+V_dm = V_dsbsc.*V_c;
+%Defining the LPF stage to smoothen demodulated wave
+V_lp = lowpass(V_dm, 2e3, Fs); %2e3 cutoff frequency to capture message
+signal
+%Plotting unfiltered demodulated wave post synchronous product detector
+figure(4);
+plot(t, V_dm);
+title('Coherent detection output V_{dm}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+ylim([-1, 1]);
+%Plotting the demodulated wave after Low Pass filtering
+figure(5);
+plot(t, V_lp);
+title('Low pass filtered demodulated wave V_{lp}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+ylim([-1, 1]);
+% Scaled output v/s message signal
+figure(6);
+plot(t, V_lp*2/(0.75*0.75));
+hold on
+plot(t, V_m);
+title('Low pass filtered demodulated wave (scaled) V_{lp}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+ylim([-1, 1]);
+legend('Demodulated wave', 'Message signal');

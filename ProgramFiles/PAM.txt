@@ -1,0 +1,64 @@
+%Defining Input Signal frequency
+f_c = 16e3; %16 KHz
+%Defining Modulating Signal frequency
+f_m = 1e3; %1 KHz
+%Sampling rate
+Fs = 8*f_c;  %128KHz > 16*2 KHz - Nyquist criterion
+t = 0:1/Fs:1-1/Fs;
+%Modulating signal
+V_m = 1*cos(2*pi*f_m*t); 
+%Square carrier wave
+V_c = (1+1*square(2*pi*f_c*t))/2; 
+
+%Modulation procedure
+dutycycle = 50;
+%Number of samples in one period
+period_sam = length(t)/f_c;   
+%Index of first sample
+ind = 1:period_sam:length(t);   
+%Number of samples in ON period
+on_samp = ceil(period_sam * dutycycle/100);   
+Vpam = zeros(1,length(t));
+for i =1:length(ind)
+    Vpam(ind(i):ind(i)+on_samp) = 1+V_m(ind(i));
+end
+
+%Demodulation procedure
+Vdemod = lowpass(Vpam, 1.1*f_m, Fs);
+
+
+%Plotting carrier signal
+figure(1);
+plot(t, V_c);
+title('Original signal V_c(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-3]);
+ylim([-2,2]);
+
+%Plotting modulating signal
+figure(2);
+plot(t, V_m);
+title('Modulating signal V_{m}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0, 1e-2]);
+ylim([-2, 2]);
+
+%Plotting PAM modulated signal
+figure(3);
+plot(t, Vpam);
+title('PAM modulated signal V_{pam}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-3]);
+ylim([-2, 2]);
+
+%Plotting PAM demodulated signal (shifted)
+figure(4);
+plot(t, Vdemod);
+title('PAM demodulated signal V_{dm}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+ylim([-2, 2]);

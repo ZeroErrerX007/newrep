@@ -1,0 +1,165 @@
+%Using frequency and amplitude values as given in the lab manual
+%Frequency of carrier signal (f_c)
+f_c = 600e3; %600 KHz
+
+%Frequency of message signal (f_m)
+f_m = 1e3; %1KHz
+%Sampling frequency (F_s >= f_c{Nyquist criterion}))
+Fs = 6*f_c; %%Sampling freq has been taken fairly large for better output
+%Defining total sampling points
+t = 0:1/Fs:1-1/Fs;
+%Defining message signal
+V_m = 0.75*cos(2*pi*f_m*t); %1.5V pp
+%Defining carrier signal
+V_c = 0.75*cos(2*pi*f_c*t); %1.5V pp
+%The hilbert transform of the modulating wave
+Vm_h = imag(hilbert(V_m));
+%The hilbert transform of the carrier wave
+Vc_h = imag(hilbert(V_c));
+%USB modulated signal
+V_usb = V_m.*V_c - Vm_h.*Vc_h;
+%LSB modulated signal
+V_lsb = V_m.*V_c + Vm_h.*Vc_h;
+%Plotting message signal and its Hilbert Transform
+figure(1);
+hold on
+plot(t, V_m);
+plot(t, Vm_h);
+title('Message signal V_m(t) and Hilbert Transform V_{mh}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+ylim([-1,1]);
+legend('V_m(t)', 'V_{mh}(t)');
+%Plotting carrier signal and its Hilbert Transform
+figure(2);
+hold on;
+plot(t, V_c);
+plot(t, Vc_h);
+title('Carrier signal V_c(t) and Hilbert Transform V_{ch}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0, 1e-5]);
+ylim([-1, 1]);
+legend('V_c(t)', 'V_{ch}(t)');
+%Plotting SSB modulated signal using USB and LSB
+figure(3);
+subplot(2,1,1);
+plot(t, V_usb);
+title('SSB-USB modulated signal V_{usb}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-5]);
+
+ylim([-1,1]);
+subplot(2,1,2)
+plot(t, V_lsb);
+title('SSB-LSB modulated signal V_{lsb}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-5]);
+ylim([-1,1]);
+
+
+
+
+
+
+
+
+%Using frequency and amplitude values as given in the lab manual
+%Frequency of carrier signal (f_c)
+f_c = 600e3; %600 KHz
+%Frequency of message signal (f_m)
+f_m = 1e3; %1KHz
+%Sampling frequency (F_s >= f_c{Nyquist criterion}))
+Fs = 6*f_c; %%Sampling freq has been taken fairly large for better output
+%Defining total sampling points
+t = 0:1/Fs:1-1/Fs;
+%Defining message signal
+V_m = 0.75*cos(2*pi*f_m*t); %1.5V pp
+%Defining carrier signal
+V_c = 0.75*cos(2*pi*f_c*t); %1.5V pp
+%The hilbert transform of the modulating wave
+Vm_h = imag(hilbert(V_m));
+%The hilbert transform of the carrier wave
+
+Vc_h = imag(hilbert(V_c));
+%USB modulated signal
+V_usb = V_m.*V_c - Vm_h.*Vc_h;
+%LSB modulated signal
+V_lsb = V_m.*V_c + Vm_h.*Vc_h;
+%Demodulation of USB and LSB modulated wave by product modulator operation
+Vprod_u = V_usb.*V_c;
+Vprod_l = V_lsb.*V_c;
+%Applying Low Pass Filter
+Vlp_u = lowpass(Vprod_u, 2*f_m, Fs);
+Vlp_l = lowpass(Vprod_l, 2*f_m, Fs);
+%Plotting unfiltered demodulated wave post synchronous product detector
+figure(4);
+subplot(2,1,1);
+plot(t, Vprod_u);
+title('Coherent detection output for USB V_{dm-u}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+ylim([-1,1]);
+subplot(2,1,2);
+plot(t, Vprod_l);
+title('Coherent detection output for LSB V_{dm-l}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+ylim([-1,1]);
+%Plotting the demodulated wave after Low Pass filtering
+figure(5);
+subplot(2,1,1);
+plot(t, Vlp_u);
+hold on
+plot(t, V_m);
+title('Low pass filtered demodulated signal for USB V_{lp-u}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+ylim([-1,1]);
+legend('Demodulated USB wave ', 'Message signal');
+subplot(2,1,2);
+plot(t, Vlp_l);
+hold on
+plot(t, V_m);
+title('Low pass filtered demodulated signal for LSB V_{lp-l}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+
+ylim([-1,1]);
+legend('Demodulated LSB wave ', 'Message signal');
+% Scaled output v/s message signal
+figure(6);
+subplot(2,1,1);
+plot(t, Vlp_u*2/(0.75*0.75));
+hold on
+plot(t, V_m);
+title('Low pass filtered demodulated wave (scaled) for USB V_{lp-u}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+ylim([-1, 1]);
+legend('Demodulated USB wave ', 'Message signal');
+subplot(2,1,2);
+plot(t, Vlp_l*2/(0.75*0.75));
+hold on
+plot(t, V_m);
+title('Low pass filtered demodulated wave (scaled) for LSB V_{lp-l}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-2]);
+ylim([-1, 1]);
+legend('Demodulated LSB wave ', 'Message signal');
+
+
+
+
+
+
+

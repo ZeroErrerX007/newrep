@@ -1,0 +1,55 @@
+clc;
+clear;
+close all;
+
+%%% NOTE:
+% The message and carrier signal frequencies have been selected to ensure
+% accurate and clear plots. Using very high frequencies with low sampling 
+% may result in distorted output due to MATLAB's numerical limitations.
+
+%% DSB-TC Modulation Demo
+
+% Parameters
+f_c = 200;             % Carrier frequency in Hz
+f_m = 10;              % Message frequency in Hz
+Fs = 6 * f_c;          % Sampling frequency (must satisfy Nyquist rate)
+t = 0:1/Fs:1-1/Fs;     % Time vector (1 second duration)
+
+% Message Signal
+V_m = 0.2 * cos(2 * pi * f_m * t);   % Message signal with 0.2V peak
+
+% Carrier Signal
+V_c = cos(2 * pi * f_c * t);         % Carrier signal (1V peak)
+
+% DSB-TC Modulated Signal
+V_dsbtc = (1 + V_m) .* V_c;          % Modulation with carrier component
+
+%% Plot Message Signal
+figure;
+plot(t, V_m, 'b');
+title('Message Signal V_m(t)');
+xlabel('Time (s)');
+ylabel('Amplitude (V)');
+xlim([0, 1]);
+ylim([-0.3, 0.3]);
+grid on;
+
+%% Plot Carrier Signal
+figure;
+plot(t, V_c, 'r');
+title('Carrier Signal V_c(t)');
+xlabel('Time (s)');
+ylabel('Amplitude (V)');
+xlim([0, 0.1]);
+ylim([-1.2, 1.2]);
+grid on;
+
+%% Plot DSB-TC Modulated Signal
+figure;
+plot(t, V_dsbtc, 'k');
+title('DSB-TC Modulated Signal V_{dsbtc}(t)');
+xlabel('Time (s)');
+ylabel('Amplitude (V)');
+xlim([0, 0.25]);
+ylim([-1.5, 1.5]);
+grid on;

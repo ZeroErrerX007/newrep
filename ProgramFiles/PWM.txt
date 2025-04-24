@@ -1,0 +1,28 @@
+%Carrier frequency
+fc=1000; %1 KHz
+%Sampling frequency
+fs=10000; %10 KHz > 2 KHz – Nyquist Criteria
+
+%Modulating frequency
+f1=200; %200 Hz
+t=0:1/fs:((2/f1)-(1/fs));
+%Modulating signal
+V_m=0.4*cos(2*pi*f1*t)+0.5;
+%Modulation
+Vpwm=modulate(V_m,fc,fs,'pwm');
+%Demodulation
+V_dm=demod(Vpwm,fc,fs,'pwm');
+V_dm = lowpass(V_dm, 1.1*f1, fs);
+%Plotting modulating wave
+subplot(311);
+plot(V_m);
+title('Original signal V_m(t)');
+%Plotting modulated wave
+subplot(312);
+plot(Vpwm);
+axis([0 500 -0.2 1.2]);
+title('PWM modulated signal V_{pwm}(t)')
+%Plotting demodulated wave
+subplot(313);
+plot(V_dm);
+title('Demodulated signal V_{dm}(t)');

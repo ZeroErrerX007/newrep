@@ -1,0 +1,79 @@
+%Defining Input Signal frequency
+f_c = 10e3; %10 KHz
+%Sampling rate
+Fs = 100*f_c;  %1MHz > 10 KHz - Nyquist criterion
+t = 0:1/Fs:1-1/Fs;
+%Defining origining signal
+V_c = 1*cos(2*pi*f_c*t); 
+
+%Adding AWGN Noise
+Vc_awgn = awgn(V_c, 4);
+
+%Noise signal (Noisy signal - Original signal)
+noise = Vc_awgn - V_c;
+
+%Spectrum and Power Spectral Density Calculations
+freq = 0:Fs/length(t):Fs/2;
+
+%FFT of input signal Vc
+dftVc = fft(V_c);
+dftVc = dftVc(1:length(V_c)/2+1)./length(V_c);
+dftVc(2:end) = 2*dftVc(2:end);
+
+%FFT of AWGN interlaced input signal Vc
+dftnoisy_Vc = fft(Vc_awgn);
+dftnoisy_Vc = dftnoisy_Vc(1:length(Vc_awgn)/2+1)./length(Vc_awgn);
+dftnoisy_Vc(2:end) = 2*dftnoisy_Vc(2:end);
+
+%Spectrum of noise
+dftnoise = fft(noise);
+dftnoise = dftnoise(1:length(noise)/2+1)./length(noise);
+dftnoise(2:end) = 2*dftnoise(2:end);
+
+%Plotting original signal
+figure(1);
+plot(t, V_c);
+title('Original signal V_c(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-3]);
+ylim([-2,2]);
+
+%Plotting AWGN interlaced signal
+figure(2);
+plot(t, Vc_awgn);
+title('Noise interlaced signal V_{c-awgn}(t)');
+xlabel('Time(s)');
+ylabel('Amplitude(V)');
+xlim([0, 1e-3]);
+ylim([-2, 2]);
+
+%Plotting noise signal
+figure(3);
+plot(t, noise);
+title('AWGN signal noise n(t)');
+xlabel('time(s)');
+ylabel('Amplitude(V)');
+xlim([0,1e-3]);
+ylim([-2, 2]);
+
+%Plotting power profile of original signal
+figure(4);
+plot(freq, 20*log10(abs(dftVc)));
+title('Original signal V_c(f)');
+xlabel('Frequency(Hz)');
+ylabel('Power(dB)');
+
+%Plotting power profile of noise interlaced signal
+figure(5);
+plot(freq, 20*log10(abs(dftnoisy_Vc)));
+title('Noise interlaced signal V_{c-awgn}(f)');
+xlabel('Frequency(Hz)');
+ylabel('Power(dB)');
+
+%Plotting Power Spectral Density (PSD is norm squared of the above spectrum)
+figure(6);
+plot(freq, 40*log10(abs(dftnoise)));
+title('PSD of noise signal n(t)');
+xlabel('Frequency(Hz)');
+ylabel('Power(dB)');
